@@ -6,4 +6,6 @@ def calc(s):
         ans += int(ss[i])
     print(ans)
 
+calc("1")
 calc("1+2")
+calc("1+2+3")
