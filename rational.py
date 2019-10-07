@@ -13,24 +13,44 @@ class Q(object):
             return f"{self.a}/{self.b}" #要復習!
     
     def __add__(self, q): # __add__で「＋」を用いた糖衣記法に対応可能
-        a = self.a * q.b + self.b * q.a
-        b = self.b * q.b
-        return Q(a, b)
+        if isinstance(q, Q):
+            a = self.a * q.b + self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a + self.b * q
+            b = self.b
+            return Q(a, b)
 
     def __sub__(self, q):
-        a = self.a * q.b - self.b * q.a
-        b = self.b * q.b
-        return Q(a, b)
+        if isinstance(q, Q):
+            a = self.a * q.b + self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a - self.b * q
+            b = self.b
+            return Q(a, b)
 
     def __mul__(self, q):
-        a = self.a * q.a
-        b = self.b * q.b
-        return Q(a, b)
+        if isinstance(q, Q):
+            a = self.a * q.b + self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a * q
+            b = self.b
+            return Q(a, b)
 
     def __truediv__(self, q):
-        a = self.a * q.b
-        b = self.b * q.a
-        return Q(a, b)
+        if isinstance(q, Q):
+            a = self.a * q.b + self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a
+            b = self.b * q
+            return Q(a, b)
     
 
 q = Q(1, 2)
