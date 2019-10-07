@@ -10,6 +10,11 @@ class Q(object):
         else:
             return f"{self.a}/{self.b}"
     
+    def add(self, q):
+        a = self.a * q.b + self.b * q.a
+        b = self.b * q.b
+        return Q(a, b)
+    
     
     
 q = Q(1, 2)
@@ -17,3 +22,7 @@ print(q)
 
 q = Q(3)
 print(q)
+
+q1 = Q(1, 2)
+q2 = Q(1, 3)
+print(q1.add(q2)) # = 5/6
