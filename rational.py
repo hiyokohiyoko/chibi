@@ -70,5 +70,6 @@ print(q1 - q2) # 1/6
 print(q1 * q2) # 1/6
 print(q1 / q2) # 3/2
 
+print(q1 / 2)
 
 
