@@ -9,6 +9,7 @@ class Val(object):
     def __repr__(self):
         return f'Val({self.value})'
 
+        
 e = Val(1)
 assert e.eval() == 1
 print(e.eval())
