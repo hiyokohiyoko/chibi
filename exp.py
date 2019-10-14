@@ -1,6 +1,11 @@
 class Expr(object): # 上位クラス
     def eval(self): pass
 
+def expr(e):
+    if not isinstance(e, Expr):
+        e = Val(e)
+    return e
+
 class Val(Expr): #Exprから継承されたクラス
     __slots__ = ['value']
     def __init__(self, v = 0):
@@ -15,8 +20,8 @@ class Val(Expr): #Exprから継承されたクラス
 class Add(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
-        self.left = left
-        self.right = right #この2つは式として渡される
+        self.left = expr(left)
+        self.right = expr(right) #この2つは式として渡される
     
     def eval(self):
         return self.left.eval() + self.right.eval() # 元々式の値として渡し、ここで評価するようにする
@@ -24,8 +29,8 @@ class Add(Expr):
 class Mul(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
-        self.left = left
-        self.right = right
+        self.left = expr(left)
+        self.right = expr(right)
     
     def eval(self):
         return self.left.eval() * self.right.eval()
@@ -33,8 +38,8 @@ class Mul(Expr):
 class Sub(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
-        self.left = left
-        self.right = right
+        self.left = expr(left)
+        self.right = expr(right)
         
     def eval(self):
         return self.left.eval() - self.right.eval()
@@ -42,8 +47,8 @@ class Sub(Expr):
 class Div(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
-        self.left = left
-        self.right = right
+        self.left = expr(left)
+        self.right = expr(right)
             
     def eval(self):
         return self.left.eval() // self.right.eval()
@@ -85,3 +90,8 @@ print(e.eval())
 #class継承
 assert isinstance(Val(1), Expr)
 assert isinstance(Div(Val(7), Val(2)), Expr)
+
+#シンプルに
+e = Mul(Add(1, 2), 3)
+assert e.eval() == 9
+print(e.eval())
