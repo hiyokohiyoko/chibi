@@ -6,6 +6,19 @@ def expr(e):
         e = Val(e)
     return e
 
+class Binary(Expr):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+    
+    def eval(self): # ここに何書けばよい???????
+        pass
+
+    def __repr__(self):
+        classname = self.__class__.__name__
+        return f'{classname}({self.left}, {self.right})'
+
 class Val(Expr): #Exprから継承されたクラス
     __slots__ = ['value']
     def __init__(self, v = 0):
