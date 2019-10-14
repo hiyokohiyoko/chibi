@@ -1,9 +1,9 @@
 import math
 
 class Q(object):
-    def  __init__(self, a, b = 1): #引数を渡す bの初期値を書いておくと省略可能
+    def  __init__(self, a, b = 1): #引数を渡す インスタンス化の時に呼ばれる bの初期値を書いておくと省略可能
         gcd = math.gcd(a, b)
-        self.a = a//gcd  #引数は必ずself
+        self.a = a//gcd  #引数は必ずself (Java, C等はthisを使う)
         self.b = b//gcd
 
     def __repr__(self): #__(  )__ で表記されるメソッドは元々意味が決まっている　reprはそのオブジェクトの中身を文字列として表示する print(object)で呼び出せる
