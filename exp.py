@@ -81,3 +81,7 @@ print(e.eval())
 e = Div(Val(7), Val(2))
 assert e.eval() == 3
 print(e.eval())
+
+#class継承
+assert isinstance(Val(1), Expr)
+assert isinstance(Div(Val(7), Val(2)), Expr)
