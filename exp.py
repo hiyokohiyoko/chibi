@@ -28,8 +28,7 @@ class Val(Expr): #Exprから継承されたクラス
         return self.value
 
     def __repr__(self):
-        classname = self.__class__.__name__
-        return f'{classname}({self})'
+        return f'Val({self.value})'
 
 class Add(Binary):
     __slots__ = ['left', 'right']
