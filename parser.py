@@ -8,7 +8,7 @@ def parse(s: str):
     else:
         s1 = s[0:pos]
         s2 = s[pos+1:]
-        return Add(Val(int(s1)), Val(int(s2)))
+        return Add(parse(s1), parse(s2))
 
 
 # output Val 
@@ -20,5 +20,13 @@ print(e)
 e = parse("1+2")
 assert e.eval() == 3
 print(e)
+
+#output Add
+print(parse("1"))
+print(parse("1+2"))
+print(parse("1+2+3"))
+
+f = parse("1+2+3")
+assert f.eval() == 6
 
 
