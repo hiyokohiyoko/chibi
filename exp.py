@@ -28,9 +28,10 @@ class Val(Expr): #Exprから継承されたクラス
         return self.value
 
     def __repr__(self):
-        return f'Val({self.value})'
+        classname = self.__class__.__name__
+        return f'{classname}({self})'
 
-class Add(Expr):
+class Add(Binary):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
         self.left = expr(left)
@@ -39,7 +40,7 @@ class Add(Expr):
     def eval(self):
         return self.left.eval() + self.right.eval() # 元々式の値として渡し、ここで評価するようにする
 
-class Mul(Expr):
+class Mul(Binary):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
         self.left = expr(left)
@@ -48,7 +49,7 @@ class Mul(Expr):
     def eval(self):
         return self.left.eval() * self.right.eval()
 
-class Sub(Expr):
+class Sub(Binary):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
         self.left = expr(left)
@@ -57,7 +58,7 @@ class Sub(Expr):
     def eval(self):
         return self.left.eval() - self.right.eval()
 
-class Div(Expr):
+class Div(Binary):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
         self.left = expr(left)
@@ -108,3 +109,4 @@ assert isinstance(Div(Val(7), Val(2)), Expr)
 e = Mul(Add(1, 2), 3)
 assert e.eval() == 9
 print(e.eval())
+
