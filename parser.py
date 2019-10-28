@@ -1,19 +1,24 @@
 from exp import Val, Add
 
 def parse(s: str):
-    num = int(s)
-    return Val(num)
+    pos = s.find("+") # +文字の位置を見つける
+    if pos == -1:
+        num = int(s)
+        return Val(num)
+    else:
+        s1 = s[0:pos]
+        s2 = s[pos+1:]
+        return Add(Val(int(s1)), Val(int(s2)))
 
 
+# output Val 
 e = parse("1")
 assert e.eval() == 1
 print(e)
 
-s = "123+456"
-pos = s.find("+") # +文字の位置を見つける
-print("pos", pos)
+#output binary Add
+e = parse("1+2")
+assert e.eval() == 3
+print(e)
 
-s1 = s[0:pos]
-s2 = s[pos+1:]
-print(s, s1, s2) #  +記号で分割
 
