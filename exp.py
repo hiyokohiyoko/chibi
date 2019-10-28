@@ -12,6 +12,7 @@ class Binary(Expr):
         self.left = left
         self.right = right
     
+    
     def eval(self): # ここに何書けばよい???????
         pass
 
