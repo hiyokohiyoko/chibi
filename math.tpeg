@@ -9,3 +9,20 @@ Zip = {                   //郵便番号の定義
     Value '-' Value
     #Zip
 }
+
+Add = {
+    Value '+' Value
+    #Add
+}
+Sub = {
+    Value '-' Value
+    #Sub
+}
+Mul = {
+    Value '*' Value
+    #Mul
+}
+Div = {
+    Value '/' Value
+    #Div
+}
