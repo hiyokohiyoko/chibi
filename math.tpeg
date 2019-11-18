@@ -3,6 +3,7 @@ example Value 123
 example Value 1234567890
 example Zip 141-0001
 example Expr 1+2
+example Expr 1+2+3
 
 
 DIGIT = [0-9]
@@ -12,6 +13,6 @@ Zip = {                   //郵便番号の定義
     #Zip
 }
 Expr = {
-    Value '+' Value
+    Value ('+' Value)+  // +は1回以上の繰り返し
     #Add
 }
