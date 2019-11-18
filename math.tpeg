@@ -1,0 +1,11 @@
+
+example Value 123
+example Value 1234567890
+example Zip 141-0001
+
+DIGIT = [0-9]
+Value = { DIGIT+  #int }  //{}で囲んだ部分は構文木のノードになる #intはノードの名前
+Zip = {                   //郵便番号の定義
+    Value '-' Value
+    #Zip
+}
