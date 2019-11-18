@@ -2,6 +2,8 @@
 example Value 123
 example Value 1234567890
 example Zip 141-0001
+example expr = 1+2
+
 
 DIGIT = [0-9]
 Value = { DIGIT+  #int }  //{}で囲んだ部分は構文木のノードになる #intはノードの名前
@@ -14,10 +16,10 @@ Add = {
     Value '+' Value
     #Add
 }
-Sub = {
-    Value '-' Value
-    #Sub
-}
+// Sub = {
+//     Value '-' Value
+//     #Sub
+// }
 Mul = {
     Value '*' Value
     #Mul
