@@ -6,10 +6,11 @@ example Expr 1
 example Expr 1+2
 example Expr 1+2+3
 example Expr 1+2*3
+example Expr (1+2)*3
 
 
 DIGIT = [0-9]
-Value = { DIGIT+  #int }  //{}で囲んだ部分は構文木のノードになる #intはノードの名前
+Value = { DIGIT+  #int } / '(' Expr ')'     //{}で囲んだ部分は構文木のノードになる #intはノードの名前   '('Expr')'はかっこ文字で挟まれているのでExprの定義において左再帰にはならない
 Zip = {                   //郵便番号の定義
     Value '-' Value
     #Zip
