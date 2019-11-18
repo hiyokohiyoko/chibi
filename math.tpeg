@@ -2,7 +2,7 @@
 example Value 123
 example Value 1234567890
 example Zip 141-0001
-example expr = 1+2
+example Expr 1+2
 
 
 DIGIT = [0-9]
@@ -11,20 +11,7 @@ Zip = {                   //郵便番号の定義
     Value '-' Value
     #Zip
 }
-
-Add = {
+Expr = {
     Value '+' Value
     #Add
-}
-// Sub = {
-//     Value '-' Value
-//     #Sub
-// }
-Mul = {
-    Value '*' Value
-    #Mul
-}
-Div = {
-    Value '/' Value
-    #Div
 }
