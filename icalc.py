@@ -34,8 +34,19 @@ class Val(Expr):
     def eval(self, env:dict):
         return self.value
 
-e = Val(0)
-assert e.eval({}) == 0
+# e = Val(0)
+# assert e.eval({}) == 0
+
+class Binary(Expr):
+    __slot__ = ['left', 'right']
+
+    def __init__(self, left, right):
+        self.left = Expr.new(left)
+        self.right = Expr.new(right)
+
+    def __repr__(self):
+        classname = self.__class__.__name__
+        return 
 
 #以下、生成されたパーサが構文解析をした結果出力される解析構文木について、実際に計算して結果を表示する関数を作る
 
