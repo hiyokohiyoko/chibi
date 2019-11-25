@@ -35,7 +35,7 @@ print(calc(t))
 def main():  #Main関数を作りたい
     while(True):
         s = input('$ ') # 入力プロンプト　''内の文字列は何でもよい
-        if s == 'q':
+        if s == '':
             break
         t = parser(s) #tは構文木
         print(calc(t))
