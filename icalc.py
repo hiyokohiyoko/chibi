@@ -22,9 +22,23 @@ def calc(t):  #tは構文木
         return calc(t[0]) + calc(t[1])
     if t == 'Mul':
         return calc(t[0]) * calc(t[1])  # 再帰的に定義
-    print(f'TODO {t.tag}')
+    print(f'TODO {t.tag}')  #まだできていないところは"TODO"と出る
     return 0
 
 t = parser('1+2*3+4*5')
 print(repr(t))
 print(calc(t))
+
+
+#以下、ターミナル画面で対話型のプログラムとして計算が実行できるようにする
+
+def main():  #Main関数を作りたい
+    while(True):
+        s = input('$ ') # 入力プロンプト　''内の文字列は何でもよい
+        if s == 'q':
+            break
+        t = parser(s) #tは構文木
+        print(calc(t))
+
+if __name__ == '__main__':  # >>>python icalc.py と打ち込んだら対話型のプログラムが開始されるようにする
+    main()
