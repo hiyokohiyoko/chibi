@@ -37,8 +37,10 @@ def main():  #Main関数を作りたい
         s = input('$ ') # 入力プロンプト　''内の文字列は何でもよい
         if s == '':
             break
-        t = parser(s) #tは構文木
-        print(calc(t))
+        #t = parser(s) #tは構文木
+        #print(calc(t))  #以上2行は単純にcalc()を使う場合
+
+        run(s) #式(Expr)に変換して評価する場合(@レポート)
 
 if __name__ == '__main__':  # >>>python icalc.py と打ち込んだら対話型のプログラムが開始されるようにする
     main()
