@@ -42,5 +42,15 @@ def main():  #Main関数を作りたい
 
         run(s) #式(Expr)に変換して評価する場合(@レポート)
 
+def run(s: str):
+    tree = parser(s) #構文木を生成
+    e = conv(tree) #構文木を式にする
+    print(e)
+    print(e.eval())
+
+def conv(tree):
+    return Val(0)
+
+
 if __name__ == '__main__':  # >>>python icalc.py と打ち込んだら対話型のプログラムが開始されるようにする
     main()
