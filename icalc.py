@@ -7,11 +7,13 @@ Value = { [0-9]+ #Int }
 ''') #"math.tpeg"ファイルで定義された文法を呼び出す
 parser = pegpy.generate(peg)  #上記で呼び出した文法に基づいてパーサを生成する
 
+'''
 t = parser('1+2*3')
 print(repr(t))
 
 t = parser('@2') #Syntax Errorになってほしい
 print(repr(t))
+'''
 
 #以下、run()を使う場合に必要になるExpr(式)クラスの定義をする
 
@@ -49,6 +51,7 @@ class Binary(Expr):
         return f'{classname}({self.left}, {self.right})'
 
 class Add(Binary):
+    __slot__ = ['left', 'right']
     def eval
 
 #以下、生成されたパーサが構文解析をした結果出力される解析構文木について、実際に計算して結果を表示する関数を作る
