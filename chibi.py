@@ -18,7 +18,7 @@ print(repr(tree))
 
 
 class Expr(object):
-    @classmethod
+    @classmethod  # クラスのメソッド
     def new(cls, v):
         if isinstance(v, Expr):
             return v
@@ -77,13 +77,13 @@ class Var(Expr):  #変数を環境を用いて保持するクラス
         # return 0 #キーが辞書になかったら初期値0を返すようにする
         raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
 
-class Assign(Expr):
+class Assign(Expr): #変数への値の代入を行うクラス
     __slots__ = ['name', 'expr']
-    def __init__(self, name: str, expr: Expr):
+    def __init__(self, name: str, e):
         self.name = name
-        self.expr = expr
+        self.e = Expr.new(e) # classmethodを使用　Expr型でない場合はExpr型に変換
     def eval(self, env):
-        env[self.name] = self.expr.eval(env)
+        env[self.name] = self.e.eval(env) #ここ循環定義にならないのなぜだろう?
         return env[self.name]
     
 
