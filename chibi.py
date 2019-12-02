@@ -68,14 +68,15 @@ class Mod(Binary):
         return self.left.eval(env) % self.right.eval(env)
 
 class Var(Expr):  #変数を環境を用いて保持するクラス
-    __slots__ = ['name']  #複数形です。
+    __slots__ = ['name']  #slotsは複数形です。
     def __init__(self, name: str):
         self.name = name
     def eval(self, env):
         if self.name in env:
             return env[self.name]
         # return 0 #キーが辞書になかったら初期値0を返すようにする
-        raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
+        else:
+            raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
 
 class Assign(Expr): #変数への値の代入を行うクラス
     __slots__ = ['name', 'expr']
@@ -120,12 +121,13 @@ def conv(tree):
         return Div(conv(tree[0]), conv(tree[1]))
     if tree == 'Mod':
                 return Mod(conv(tree[0]), conv(tree[1]))
+
     if tree == 'Var':
         return Var(str(tree))
     if tree == 'LetDecl':
         return Assign(str(tree[0]), conv(tree[1])) # 変数への代入を行う場合
 
-    print('@TODO', tree.tag)
+    print('@TODO', tree.tag, repr(tree))
     return Val(str(tree))
 
 
@@ -135,9 +137,9 @@ def run(src: str, env: dict): #構文木からVar, Assign式に変換できる�
         print(repr(tree))
     else:
         e = conv(tree)
-        print(repr(e))
         print('env', env)
         print(e.eval(env))
+
 def main():
     try:
         env = {}
@@ -148,5 +150,6 @@ def main():
             run(s, env)
     except EOFError:
         return
+
 if __name__ == '__main__':
     main()
