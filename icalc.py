@@ -46,7 +46,10 @@ class Binary(Expr):
 
     def __repr__(self):
         classname = self.__class__.__name__
-        return 
+        return f'{classname}({self.left}, {self.right})'
+
+class Add(Binary):
+    def eval
 
 #以下、生成されたパーサが構文解析をした結果出力される解析構文木について、実際に計算して結果を表示する関数を作る
 
