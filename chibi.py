@@ -25,19 +25,19 @@ class Expr(object):
         return Val(v)
 
 class Val(Expr):
-    __slot__ = ['value']
+    __slots__ = ['value']
     def __init__(self, value):
         self.value = value
     def __repr__(self):
         return f'Val({self.value})'
-    def eval(self, env: dict):
+    def eval(self, env: dict):    #引数に変数の集合とそれに対応する値の集合(=環境)をとる。　環境envは変数が値をローカルに、可変量として保持している状態の辞書である
         return self.value
 
 #e = Val(0)
 #assert e.eval({}) == 0
 
 class Binary(Expr):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def __init__(self, left, right):
         self.left = Expr.new(left)
         self.right = Expr.new(right)
@@ -46,26 +46,61 @@ class Binary(Expr):
         return f'{classname}({self.left},{self.right})'
 
 class Add(Binary):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) + self.right.eval(env)
 class Sub(Binary):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) - self.right.eval(env)
 class Mul(Binary):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) * self.right.eval(env)
 class Div(Binary):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) // self.right.eval(env)
 
 class Mod(Binary):
-    __slot__ = ['left', 'right']
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) % self.right.eval(env)
+
+class Var(Expr):  #変数を環境を用いて保持するクラス
+    __slots__ = ['name']  #複数形です。
+    def __init__(self, name: str):
+        self.name = name
+    def eval(self, env):
+        if self.name in env:
+            return env[self.name]
+        # return 0 #キーが辞書になかったら初期値0を返すようにする
+        raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
+
+class Assign(Expr):
+    __slots__ = ['name', 'expr']
+    def __init__(self, name: str, expr: Expr):
+        self.name = name
+        self.expr = expr
+    def eval(self, env):
+        env[self.name] = self.expr.eval(env)
+        return env[self.name]
+    
+
+# Varクラスのテスト
+try:
+    e = Var('x')
+    print(e.eval({'x': 123})) #ここで辞書を作っている
+    print(e.eval({})) #辞書が定義されていないので(エラー対策をしていないと)キーエラーになる
+except NameError:
+    print("未定義の変数です")
+
+# 変数への値の代入
+env = {}
+e = Assign('x', Val(1)) # x = 1
+print(e.eval(env)) # 1
+e = Assign('x', Add(Var('x'), Val(2))) # x = x + 2
+print(e.eval(env)) # 3
 
 
 def conv(tree):
