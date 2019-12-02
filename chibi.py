@@ -2,11 +2,7 @@
 import pegpy
 
 #from pegpy.tpeg import ParseTree
-peg = pegpy.grammar('''
-Expression = Product (^{ '+' Product #Add})*
-Product = Value (^{ '*' Value #Mul})*
-Value = { [0-9]+ #Int }
-''')
+peg = pegpy.grammar('chibi.tpeg')
 parser = pegpy.generate(peg)
 
 '''
@@ -79,7 +75,7 @@ class Var(Expr):  #変数を環境を用いて保持するクラス
             raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
 
 class Assign(Expr): #変数への値の代入を行うクラス
-    __slots__ = ['name', 'expr']
+    __slots__ = ['name', 'e']
     def __init__(self, name: str, e):
         self.name = name
         self.e = Expr.new(e) # classmethodを使用　Expr型でない場合はExpr型に変換
