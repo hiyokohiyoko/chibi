@@ -162,20 +162,44 @@ class Lambda(Expr):
     def __repr__(self):
         return f'λ{self.name} . {str(self.body)}'
     def eval(self, env):
-        pass
+        return self
+
+def copy(env): #環境をコピーする関数
+    newenv = {}
+    for x in env.keys():
+        newenv[x] = env[x]
+    return newenv
+
 
 # 確認
 f = Lambda('x', Add(Var('x'), 1)) # λx.x+1
 print(repr(f))
 
+class FuncApp(Expr):
+    __slots__ = ['func', 'param']
+    def __init__(self, func: Lambda, param):
+        self.func = func
+        self.param = Expr.new(param)
+    def __repr__(self):
+        return f'({repr(self.func)}) ({repr(self.param)})' # ここ循環定義にならないのか?
+
+    def eval(self, env): #環境を書き換えて評価する
+        v = self.param.eval(env) # パラメータを先に評価する
+        name = self.func.name # Lambda classの変数名をもらう
+        env = copy(env) # 環境をコピーすることでローカルスコープを作る
+        env[name] = v # コピーして作られたローカルな環境において、変数名にパラメータの値を代入する
+        return self.func.body.eval(env) # パラメータの値を式に代入して値を返す
 
 
 def conv(tree):
     if tree == 'Block':
         return conv(tree[0])
+    if tree == 'FuncDecl': # Lambda式の時に追加
+        return Assign(str(tree[0]), Lambda(str(tree[1]), conv(tree[2])))
+    if tree == 'FuncApp':
+        return FuncApp(conv(tree[0]), conv(tree[1]))
     if tree == 'Val' or tree == 'Int':
         return Val(int(str(tree)))
-
     if tree == 'Add':
         return Add(conv(tree[0]), conv(tree[1]))
     if tree == 'Sub':
