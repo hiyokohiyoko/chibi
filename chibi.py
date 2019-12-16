@@ -92,6 +92,8 @@ class Var(Expr):  #変数を環境を用いて保持するクラス
     __slots__ = ['name']  #slotsは複数形です。
     def __init__(self, name: str):
         self.name = name
+    def __repr(self):
+        return self.name
     def eval(self, env: dict):
         if self.name in env:
             return env[self.name]
@@ -184,11 +186,12 @@ class FuncApp(Expr):
         return f'({repr(self.func)}) ({repr(self.param)})' # ここ循環定義にならないのか?
 
     def eval(self, env): #環境を書き換えて評価する
+        f = self.func.eval(env)
         v = self.param.eval(env) # パラメータを先に評価する
-        name = self.func.name # Lambda classの変数名をもらう
+        name = f.name # Lambda classの変数名をもらう
         env = copy(env) # 環境をコピーすることでローカルスコープを作る
         env[name] = v # コピーして作られたローカルな環境において、変数名にパラメータの値を代入する
-        return self.func.body.eval(env) # パラメータの値を式に代入して値を返す
+        return f.body.eval(env) # パラメータの値を式に代入して値を返す
 
 
 def conv(tree):
@@ -198,6 +201,10 @@ def conv(tree):
         return Assign(str(tree[0]), Lambda(str(tree[1]), conv(tree[2])))
     if tree == 'FuncApp':
         return FuncApp(conv(tree[0]), conv(tree[1]))
+    if tree == 'If':
+        return If(conv(tree[0]), conv(tree[1]), conv(tree[2]))
+    if tree == 'While':
+        return While(conv(tree[0]), conv(tree[1]))
     if tree == 'Val' or tree == 'Int':
         return Val(int(str(tree)))
     if tree == 'Add':
