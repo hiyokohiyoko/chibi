@@ -153,6 +153,22 @@ e = Assign('x', Add(Var('x'), Val(2))) # x = x + 2
 print(e.eval(env)) # 3
 '''
 
+# lambda式
+class Lambda(Expr):
+    __slots__ = ['name', 'body']
+    def __init__(self, name, body):
+        self.name = name
+        self.body = body
+    def __repr__(self):
+        return f'λ{self.name} . {str(self.body)}'
+    def eval(self, env):
+        pass
+
+# 確認
+f = Lambda('x', Add(Var('x'), 1)) # λx.x+1
+print(repr(f))
+
+
 
 def conv(tree):
     if tree == 'Block':
@@ -171,7 +187,7 @@ def conv(tree):
     if tree == 'Mod':
         return Mod(conv(tree[0]), conv(tree[1]))
     if tree == 'Eq':
-        return Eq((conv(tree[0]), conv(tree[1]))
+        return Eq(conv(tree[0]), conv(tree[1]))
     if tree == 'Ne':
         return Ne(conv(tree[0]), conv(tree[1]))
     if tree == 'Lt':
