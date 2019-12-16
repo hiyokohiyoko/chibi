@@ -92,7 +92,7 @@ class Var(Expr):  #変数を環境を用いて保持するクラス
     __slots__ = ['name']  #slotsは複数形です。
     def __init__(self, name: str):
         self.name = name
-    def eval(self, env):
+    def eval(self, env: dict):
         if self.name in env:
             return env[self.name]
         # return 0 #キーが辞書になかったら初期値0を返すようにする
