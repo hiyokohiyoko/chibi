@@ -119,7 +119,7 @@ def conv(tree):
     if tree == 'Mod':
         return Mod(conv(tree[0]), conv(tree[1]))
     if tree == 'Eq':
-        return Eq()
+        return Eq(conv(tree[0]), conv(tree[1]))
 
     if tree == 'Var':
         return Var(str(tree))
