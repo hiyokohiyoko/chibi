@@ -58,11 +58,59 @@ class Div(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) // self.right.eval(env)
-
 class Mod(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) % self.right.eval(env)
+class Eq(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) == self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Ne(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) != self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Ne(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) != self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Lt(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) < self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Lte(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) <= self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Gt(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) > self.right.eval(env):
+            return 1
+        else:
+            return 0
+class Gte(Binary):
+    __slots__ = ['left', 'right']
+    def eval(self, env: dict):
+        if self.left.eval(env) >= self.right.eval(env):
+            return 1
+        else:
+            return 0
 
 class Var(Expr):  #変数を環境を用いて保持するクラス
     __slots__ = ['name']  #slotsは複数形です。
