@@ -25,7 +25,7 @@ class Q(object):
 
     def __sub__(self, q):
         if isinstance(q, Q):
-            a = self.a * q.b + self.b * q.a
+            a = self.a * q.b - self.b * q.a
             b = self.b * q.b
             return Q(a, b)
         else:
