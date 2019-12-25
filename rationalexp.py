@@ -87,6 +87,10 @@ assert isinstance(e, Expr) # 値の種類を判定 True
 assert isinstance(e, Qval) # True
 # assert isinstance(e, int) # false
 
+e = Qval(1, 2)
+assert e.eval() == 0.5
+print(e.eval())
+
 #Add
 v = Add(Qval(1), Qval(2))
 assert v.eval() == 3
@@ -123,4 +127,6 @@ print(e.eval())
 e = Mul(Add(Qval(1, 2), Qval(2, 3)), Qval(6, 7))
 print(e.eval())
 
+# 1/2 + 2/3
+e = Add(Q(1, 2), Q(2, 3))
 
