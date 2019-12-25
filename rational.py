@@ -35,7 +35,7 @@ class Q(object):
 
     def __mul__(self, q):
         if isinstance(q, Q):
-            a = self.a * q.b + self.b * q.a
+            a = self.a * q.a
             b = self.b * q.b
             return Q(a, b)
         else:
@@ -45,8 +45,8 @@ class Q(object):
 
     def __truediv__(self, q):
         if isinstance(q, Q):
-            a = self.a * q.b + self.b * q.a
-            b = self.b * q.b
+            a = self.a * q.b
+            b = self.b * q.a
             return Q(a, b)
         else:
             a = self.a
