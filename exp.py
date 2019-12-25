@@ -1,7 +1,7 @@
 class Expr(object): # 上位クラス
-    def eval(self): pass
+    def eval(self): pass # 下位クラスに共通のメソッド　定義の内容は下位クラスごとに違うのでここでは定義しない
 
-def expr(e):
+def expr(e): #Expr(式)クラスであるかどうか判定する関数
     if not isinstance(e, Expr):
         e = Val(e)
     return e
@@ -12,8 +12,7 @@ class Binary(Expr):
         self.left = left
         self.right = right
     
-    def eval(self): # ここに何書けばよい???????
-        pass
+    def eval(self): pass # 定義の内容は下位クラスごとに違うのでここでは定義しない
 
     def __repr__(self):
         classname = self.__class__.__name__
@@ -38,6 +37,8 @@ class Add(Binary):
     
     def eval(self):
         return self.left.eval() + self.right.eval() # 元々式の値として渡し、ここで評価するようにする
+
+    # reprは上位クラスBinaryで定義済
 
 class Mul(Binary):
     __slots__ = ['left', 'right']
