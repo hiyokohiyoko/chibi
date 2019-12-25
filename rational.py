@@ -1,4 +1,4 @@
-
+# 有理数の演算を定義する
 import math
 
 class Q(object):
