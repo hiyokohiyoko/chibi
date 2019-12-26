@@ -71,20 +71,50 @@ class Div(Binary):
     def eval(self):
         return self.left.eval() / self.right.eval()
 
+class Mod(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+            
+    def eval(self):
+        return self.left.eval() % self.right.eval()
+
 
 def conv(t):
-    print(repr(t))
-    return Val(0)
+    #print(repr(t)) # 評価される前の構造木を表示
+    if t.tag == 'Block':
+        return conv(t[0])
+    if t.tag == 'Int':
+        return Val(int(str(t)))
+    if t.tag == 'Add':
+        return Add(conv(t[0]), conv(t[1]))
+    if t.tag == 'Sub':
+        return Sub(conv(t[0]), conv(t[1]))
+    if t.tag == 'Mul':
+        return Mul(conv(t[0]), conv(t[1]))
+    if t.tag == 'Div':
+        return Div(conv(t[0]), conv(t[1]))
+    if t.tag == 'Mod':
+        return Mod(conv(t[0]), conv(t[1]))
+    return Val(str(t))
 
 def run(s: str):
     tree = parser(s)
-    e = conv(tree)
-    print(e)
-    print(e.eval())
+    if tree.isError:
+        print(repr(tree))
+    else:  # 解析が可能な場合
+        e = conv(tree)
+        print(repr(e))
+        print(e.eval())
 
 def main():
-    s = input('>>>')
-    run(s)
+    while True:
+        s = input('>>>')
+        if s == '':
+            break
+        run(s)
+    return
 
 if __name__ == '__main__':
     main()
