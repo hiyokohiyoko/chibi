@@ -1,10 +1,11 @@
-import pegpy
+import pegpy.tpeg as pegpy
 
-peg = pegpy.grammar('''
-Expression = Product (^{ '+' Product #Add})*
-Product = Value (^{ '*' Value #Mul})*
-Value = { [0-9]+ #Int }
-''') #"math.tpeg"ファイルで定義された文法を呼び出す
+#peg = pegpy.grammar('''
+#Expression = Product (^{ '+' Product #Add})*
+#Product = Value (^{ '*' Value #Mul})*
+#Value = { [0-9]+ #Int }
+#''') #"math.tpeg"ファイルで定義された文法を呼び出す
+peg = pegpy.grammer('chibi.tpeg')
 parser = pegpy.generate(peg)  #上記で呼び出した文法に基づいてパーサを生成する
 
 '''
