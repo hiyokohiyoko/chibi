@@ -10,22 +10,24 @@ example Expr (1+2)*3
 
 
 DIGIT = [0-9]
-Value = { DIGIT+  #int } / '(' Expr ')'     //{}で囲んだ部分は構文木のノードになる #intはノードの名前   '('Expr')'はかっこ文字で挟まれているのでExprの定義において左再帰にはならない
+Value = { DIGIT+  #int } / '(' Expr ')'     
+     //{}で囲んだ部分は構文木のノードになる #intはノードの名前   '('Expr')'はかっこ文字で挟まれているのでExprの定義において左再帰にはならない
+     // 上記文は括弧内の式をまとめてValueと見なすことで、計算の最優先度を()に与えることを実現している
 Zip = {                   //郵便番号の定義
     Value '-' Value
     #Zip
 }
 
-// Expr = {
-//     // many +
-//     // Value ('+' Value)*  // +は1回以上の繰り返し(2項以上の演算しか評価できない) *は0回以上の繰り返し(1項の数字のみも式として評価できる)
+Expr = {
+     // many +
+     //Value ('+' Value)*  // +は1回以上の繰り返し(2項以上の演算しか評価できない) *は0回以上の繰り返し(1項の数字のみも式として評価できる)
 
 //     // left assoc
 //     Value '+' Expr // ちなみに Expr '+' Expr (左側の項に再帰式)と書くと無限ループになってしまうので、左再帰は禁止されている
 //     #Add
-// } / Value  // '/'はorの意味　Expr := Value '+' Expr or Value(単項) の意味
+//} / Value  // '/'はorの意味　Expr := Value '+' Expr or Value(単項) の意味
 
 // add and mul
-Expr = {Prod '+' Prod #Add} / Prod  // '+'での分割が先　加算が含まれない場合はProd自身
+Expr = {Prod '+' Expr #Add} / Prod  // '+'での分割が先　加算が含まれない場合はProd自身
 Prod = {Value '*' Value #Mul} / Value  // 乗算が含まれない場合はValue自身
 
