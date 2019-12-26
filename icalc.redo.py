@@ -2,7 +2,7 @@ import pegpy.tpeg as pegpy
 peg = pegpy.grammer('chibi.tpeg')
 parser = pegpy.generate(peg)
 
-def sun(s: str):
+def run(s: str):
     pass
 
 def main():
