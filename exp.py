@@ -65,7 +65,7 @@ class Div(Binary):
         self.right = expr(right)
             
     def eval(self):
-        return self.left.eval() // self.right.eval()
+        return self.left.eval() / self.right.eval()
 
 
 
@@ -98,7 +98,7 @@ print(e.eval())
 
 #Div
 e = Div(Val(7), Val(2))
-assert e.eval() == 3
+assert e.eval() == 3.5
 print(e.eval())
 
 #class継承
