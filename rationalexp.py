@@ -16,9 +16,9 @@ class Binary(Expr):
     
     def eval(self): pass # 定義の内容は下位クラスごとに違うのでここでは定義しない
 
-    def __repr__(self):
-        classname = self.__class__.__name__
-        return f'{classname}({self.a}, {self.b})'
+    def __repr__(self):pass
+        #classname = self.__class__.__name__
+        #return f'{classname}({self.a}, {self.b})'
 
 class Val(Expr): #Exprから継承されたクラス
     __slots__ = ['value']
@@ -29,13 +29,18 @@ class Val(Expr): #Exprから継承されたクラス
         return self.value
 
     def __repr__(self):
-        return f'Val({self.value})'
+        return self.value
 
 class Add(Binary):
     __slots__ = ['a', 'b']
     def __init__(self, a, b):
         self.a = expr(a)
         self.b = expr(b) #この2つは式として渡される
+
+    def __repr__(self):
+        aa = self.a.eval().a.eval() * self.b.eval().b.eval() + self.a.eval().b.eval() * self.b.eval().a.eval()
+        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
+        return Div(aa, bb)
     
     def eval(self):
         aa = self.a.eval().a.eval() * self.b.eval().b.eval() + self.a.eval().b.eval() * self.b.eval().a.eval()
@@ -49,6 +54,11 @@ class Mul(Binary):
     def __init__(self, a, b):
         self.a = expr(a)
         self.b = expr(b)
+
+    def __repr__(self):
+        aa = self.a.eval().a.eval() * self.b.eval().a.eval()
+        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
+        return Div(aa, bb)
     
     def eval(self):
         aa = self.a.eval().a.eval() * self.b.eval().a.eval()
@@ -60,6 +70,11 @@ class Sub(Binary):
     def __init__(self, a, b):
         self.a = expr(a)
         self.b = expr(b)
+
+    def __repr__(self):
+        aa = self.a.eval().a.eval() * self.b.eval().b.eval() - self.a.eval().b.eval() * self.b.eval().a.eval()
+        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
+        return Div(aa, bb)
         
     def eval(self):
         aa = self.a.eval().a.eval() * self.b.eval().b.eval() - self.a.eval().b.eval() * self.b.eval().a.eval()
@@ -71,10 +86,18 @@ class Div(Binary):
     def __init__(self, a, b = 1):
         self.a = expr(a)
         self.b = expr(b)
+
+    def __repr__(self):
+        if self.a.eval().b.eval() == 1 and self.b.eval().b.eval() == 1:
+           return Div(self.a.eval().a.eval(), self.b.eval().a.eval())
+        else:
+            aa = self.a.eval().a.eval() * self.b.eval().b.eval()
+            bb = self.a.eval().b.eval() * self.b.eval().a.eval()
+            return Div(aa, bb)
             
     def eval(self):
         if self.a.eval().b.eval() == 1 and self.b.eval().b.eval() == 1:
-           return
+           return Div(self.a.eval().a.eval(), self.b.eval().a.eval())
         else:
             aa = self.a.eval().a.eval() * self.b.eval().b.eval()
             bb = self.a.eval().b.eval() * self.b.eval().a.eval()
@@ -83,7 +106,7 @@ class Div(Binary):
 
 #有理数表示 1/2 + 2/3
 e = Add(Div(1, 2), Div(2, 3))
-assert e == Div(6, 7)
+#assert e == Div(6, 7)
 print(e)
 
 
