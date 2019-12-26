@@ -53,7 +53,6 @@ class Binary(Expr):
 
 class Add(Binary):
     __slot__ = ['left', 'right']
-    def eval
 
 #以下、生成されたパーサが構文解析をした結果出力される解析構文木について、実際に計算して結果を表示する関数を作る
 
