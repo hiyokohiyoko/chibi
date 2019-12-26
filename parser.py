@@ -66,7 +66,7 @@ e = parse("1-2-3")
 print(e.eval())
 assert e.eval() == -4
 print(parse("1-9/3+6*2+4").eval()) # 14(+, *もrfind()にしないと正しい答えが出ない)
-print(parse("1*4/2+8*3*2/12-6").eval()) # 0(全部rfind()にしても正しい答えが出ない)
+print(parse("1*4/2+8*3*2/12-6").eval()) # 0(全部rfind()にしても正しい答えが出ない)→Divを//から/にしたら解決
 print()
 
 
