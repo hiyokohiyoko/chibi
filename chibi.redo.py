@@ -4,7 +4,7 @@ parser = pegpy.generate(peg)
 
 class Expr(object): # 上位クラス
     def eval(self): pass # 下位クラスに共通のメソッド　定義の内容は下位クラスごとに違うのでここでは定義しない
-
+    
 def expr(e): #Expr(式)クラスであるかどうか判定する関数
     if not isinstance(e, Expr):
         e = Val(e)
@@ -27,7 +27,7 @@ class Val(Expr): #Exprから継承されたクラス
     def __init__(self, v = 0):
         self.value = v
 
-    def eval(self):
+    def eval(self, env: dict):
         return self.value
 
     def __repr__(self):
@@ -39,8 +39,8 @@ class Add(Binary):
         self.left = expr(left)
         self.right = expr(right) #この2つは式として渡される
     
-    def eval(self):
-        return self.left.eval() + self.right.eval() # 元々式の値として渡し、ここで評価するようにする
+    def eval(self, env: dict):
+        return self.left.eval(env) + self.right.eval(env) # 元々式の値として渡し、ここで評価するようにする
 
     # reprは上位クラスBinaryで定義済
 
@@ -50,8 +50,8 @@ class Mul(Binary):
         self.left = expr(left)
         self.right = expr(right)
     
-    def eval(self):
-        return self.left.eval() * self.right.eval()
+    def eval(self, env: dict):
+        return self.left.eval(env) * self.right.eval(env)
 
 class Sub(Binary):
     __slots__ = ['left', 'right']
@@ -59,8 +59,8 @@ class Sub(Binary):
         self.left = expr(left)
         self.right = expr(right)
         
-    def eval(self):
-        return self.left.eval() - self.right.eval()
+    def eval(self, env: dict):
+        return self.left.eval(env) - self.right.eval(env)
 
 class Div(Binary):
     __slots__ = ['left', 'right']
@@ -68,8 +68,8 @@ class Div(Binary):
         self.left = expr(left)
         self.right = expr(right)
             
-    def eval(self):
-        return self.left.eval() / self.right.eval()
+    def eval(self, env: dict):
+        return self.left.eval(env) / self.right.eval(env)
 
 class Mod(Binary):
     __slots__ = ['left', 'right']
@@ -77,8 +77,8 @@ class Mod(Binary):
         self.left = expr(left)
         self.right = expr(right)
             
-    def eval(self):
-        return self.left.eval() % self.right.eval()
+    def eval(self, env: dict):
+        return self.left.eval(env) % self.right.eval(env)
 
 
 def conv(t):
@@ -99,22 +99,29 @@ def conv(t):
         return Mod(conv(t[0]), conv(t[1]))
     return Val(str(t))
 
-def run(s: str):
+def run(s: str, env: dict):
     tree = parser(s)
     if tree.isError:
         print(repr(tree))
     else:  # 解析が可能な場合
         e = conv(tree)
         print(repr(e))
-        print(e.eval())
+        print('env', env)
+        print(e.eval(env))
 
 def main():
     while True:
+        env = {}
         s = input('>>>')
         if s == '':
             break
-        run(s)
+        run(s, env)
     return
 
 if __name__ == '__main__':
     main()
+
+
+# modified eval()
+e = Mul(Val(1), Val(2))
+assert e.eval({}) == 2
