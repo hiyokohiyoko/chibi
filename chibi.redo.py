@@ -172,6 +172,22 @@ def conv(t):
         return Div(conv(t[0]), conv(t[1]))
     if t.tag == 'Mod':
         return Mod(conv(t[0]), conv(t[1]))
+    if t.tag == 'Eq':
+        return Eq(conv(t[0]), conv(t[1]))
+    if t.tag == 'Ne':
+        return Ne(conv(t[0]), conv(t[1]))
+    if t.tag == 'Lt':
+        return Lt(conv(t[0]), conv(t[1]))
+    if t.tag == 'Lte':
+        return Lte(conv(t[0]), conv(t[1]))
+    if t.tag == 'Gt':
+        return Gt(conv(t[0]), conv(t[1]))
+    if t.tag == 'Gte':
+        return Gte(conv(t[0]), conv(t[1]))
+    if t.tag == 'Var':
+        return Var(str(t))
+    if t.tag == 'LetDecl':
+        return Assign(str(t[0]), conv(t[1]))
     return Val(str(t))
 
 def run(s: str, env: dict):
