@@ -21,6 +21,16 @@ class Var(Expr):
         else:
             raise NameError(self.name)
 
+class Assign(Expr):
+    __slots__ = ['name', 'expr']
+    def __init__(self, s: str, ex: Expr):
+        self.name = s
+        self.expr = ex
+
+    def eval(self, env: dict):
+        env[self.name] = self.expr.eval(env)
+        return env[self.name]
+
 class Binary(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
@@ -200,3 +210,8 @@ assert e.eval({}) == 0
 # added Var
 e = Var('x')
 assert e.eval({'x':1}) == 1
+
+# added Assign
+env = {}
+e = Assign('x', Val(1))
+assert e.eval(env) == 1
