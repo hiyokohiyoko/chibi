@@ -192,7 +192,7 @@ def conv(t):
 
 def run(s: str, env: dict):
     tree = parser(s)
-    if tree.isError:
+    if tree.isError():
         print('Error')
     else:  # 解析が可能な場合
         e = conv(tree)
