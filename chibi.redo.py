@@ -1,4 +1,4 @@
-import pegpy.tpeg as pegpy
+import pegpy
 peg = pegpy.grammar('chibi.tpeg')
 parser = pegpy.generate(peg)
 
@@ -193,7 +193,7 @@ def conv(t):
 def run(s: str, env: dict):
     tree = parser(s)
     if tree.isError:
-        print(repr(tree))
+        print('Error')
     else:  # 解析が可能な場合
         e = conv(tree)
         print(repr(e))
@@ -201,13 +201,15 @@ def run(s: str, env: dict):
         print(e.eval(env))
 
 def main():
-    while True:
+    try:
         env = {}
-        s = input('>>>')
-        if s == '':
-            break
-        run(s, env)
-    return
+        while True:
+            s = input('>>> ')
+            if s == '':
+                break
+            run(s, env)
+    except EOFError:
+        return
 
 if __name__ == '__main__':
     main()
