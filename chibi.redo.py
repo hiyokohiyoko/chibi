@@ -10,6 +10,17 @@ def expr(e): #Expr(式)クラスであるかどうか判定する関数
         e = Val(e)
     return e
 
+class Var(Expr):
+    __slots__ = ['name']
+    def __init__(self, s: str):
+        self.name = s
+
+    def eval(self, env: dict):
+        if self.name in env:
+            return env[self.name]
+        else:
+            raise NameError(self.name)
+
 class Binary(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
@@ -185,3 +196,7 @@ e = Lt(Val(0), Val(1))
 assert e.eval({}) == 1
 e = Gt(Val(0), Val(1))
 assert e.eval({}) == 0
+
+# added Var
+e = Var('x')
+assert e.eval({'x':1}) == 1
