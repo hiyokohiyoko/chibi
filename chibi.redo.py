@@ -80,6 +80,60 @@ class Mod(Binary):
     def eval(self, env: dict):
         return self.left.eval(env) % self.right.eval(env)
 
+class Eq(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) == self.right.eval(env) else 0
+
+class Ne(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) != self.right.eval(env) else 0
+
+class Lt(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) < self.right.eval(env) else 0
+
+class Lte(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) <= self.right.eval(env) else 0
+
+class Gt(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) > self.right.eval(env) else 0
+
+class Gte(Binary):
+    __slots__ = ['left', 'right']
+    def __init__(self, left, right):
+        self.left = expr(left)
+        self.right = expr(right)
+    
+    def eval(self, env: dict):
+        return 1 if self.left.eval(env) >= self.right.eval(env) else 0
+
 
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
@@ -125,3 +179,9 @@ if __name__ == '__main__':
 # modified eval()
 e = Mul(Val(1), Val(2))
 assert e.eval({}) == 2
+
+# added comere
+e = Lt(Val(0), Val(1))
+assert e.eval({}) == 1
+e = Gt(Val(0), Val(1))
+assert e.eval({}) == 0
