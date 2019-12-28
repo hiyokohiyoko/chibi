@@ -26,7 +26,7 @@ class Assign(Expr):
     __slots__ = ['name', 'expr']
     def __init__(self, s: str, ex: Expr):
         self.name = s
-        self.expr = ex
+        self.expr = expr(ex)
 
     def eval(self, env: dict):
         env[self.name] = self.expr.eval(env)
@@ -165,6 +165,18 @@ class Block(Expr):
         for e in self.exprs:  # 逐次処理の本質的な部分はここ
             e.eval(env)
 
+class If(Expr):
+    __slots__ = ['cond', 'then', 'else_']
+    def __init__ (self, cond, then, else_):
+        self.cond = cond
+        self.then = then
+        self.else_ = else_
+    
+    def eval(self, env):
+        if self.cond.eval(env) != 0:
+            return self.then.eval(env)
+        else:
+            return self.else_.eval(env)
 
 
 def conv(t):
@@ -246,10 +258,17 @@ e = Assign('x', Val(1))
 assert e.eval(env) == 1
 
 # Block
-env = {}
 e = Block(
     Assign('x', Val(1)),
     Assign('x', Add(Var('x'), Val(1))),
-    Var('x')
+    #Var('x')
 )
-print(e.eval(env))
+# assert(e.eval({})) == 2
+
+# If
+e = Block(
+    Assign('x', 2),
+    Assign('y', 1),
+    If(Gt(Var('x'), Var('y')), Var('x'), Var('y'))
+)
+assert(e.eval({})) == 2
