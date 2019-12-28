@@ -211,7 +211,10 @@ def conv(t):
         return Var(str(t))
     if t.tag == 'LetDecl':
         return Assign(str(t[0]), conv(t[1]))
+    if t.tag == 'If':
+        return If(conv(t[0]), conv(t[1]), conv(t[2]))
     return Val(str(t))
+
 
 def run(s: str, env: dict):
     tree = parser(s)
