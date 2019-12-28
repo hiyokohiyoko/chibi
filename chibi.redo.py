@@ -194,7 +194,7 @@ class While(Expr):
 class Break(Expr):
     def eval(self, env):
         raise ValueError
-    
+
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
     if t.tag == 'Block':
@@ -301,4 +301,17 @@ e = Block(
         Assign('x', Add(Var('x'), Val(1))) ),
     Var('x')
 )
-assert e.eval({}) == 10
+# assert e.eval({}) == 10
+
+# Break
+e = Block(
+    Assign('x', Val(0)),
+    While(Lt(Var('x'), Val(10)),
+        If(Eq(Var('x'), Val(5)),
+            Break(),
+            Assign('x', Add(Var('x'), Val(1))))
+    ),
+    Var('x')
+)
+# assert e.eval({}) == 5
+print(e.eval({}))
