@@ -178,6 +178,15 @@ class If(Expr):
         else:
             return self.else_.eval(env)
 
+class While(Expr):
+    __slots__ = ['cond', 'body']
+    def __init__ (self, cond, body):
+        self.cond = cond
+        self.body = body
+
+    def eval(self, env):
+        while self.cond.eval(env) != 0:
+            self.body.eval(env)
 
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
@@ -213,6 +222,8 @@ def conv(t):
         return Assign(str(t[0]), conv(t[1]))
     if t.tag == 'If':
         return If(conv(t[0]), conv(t[1]), conv(t[2]))
+    if t.tag == 'While':
+        return While(conv(t[0]), conv(t[1]))
     return Val(str(t))
 
 
@@ -266,7 +277,7 @@ e = Block(
     Assign('x', Add(Var('x'), Val(1))),
     #Var('x')
 )
-# assert(e.eval({})) == 2
+# assert e.eval({}) == 2
 
 # If
 e = Block(
@@ -274,4 +285,13 @@ e = Block(
     Assign('y', 1),
     If(Gt(Var('x'), Var('y')), Var('x'), Var('y'))
 )
-assert(e.eval({})) == 2
+# assert e.eval({}) == 2
+
+# While
+e = Block(
+    Assign('x', Val(0)),
+    While(Lt(Var('x'), Val(10)),
+        Assign('x', Add(Var('x'), Val(1))) ),
+    Var('x')
+)
+assert e.eval({}) == 10
