@@ -179,15 +179,22 @@ class If(Expr):
             return self.else_.eval(env)
 
 class While(Expr):
-    __slots__ = ['cond', 'body']
-    def __init__ (self, cond, body):
+    __slots__ = ['cond', 'body_']
+    def __init__ (self, cond, body_):
         self.cond = cond
-        self.body = body
+        self.body_ = body_
 
     def eval(self, env):
         while self.cond.eval(env) != 0:
-            self.body.eval(env)
+            try:
+                self.body_.eval(env)
+            except ValueError:
+                break
 
+class Break(Expr):
+    def eval(self, env):
+        raise ValueError
+    
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
     if t.tag == 'Block':
