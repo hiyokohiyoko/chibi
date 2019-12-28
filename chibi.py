@@ -1,37 +1,29 @@
-
 import pegpy
-
 #from pegpy.tpeg import ParseTree
 peg = pegpy.grammar('chibi.tpeg')
 parser = pegpy.generate(peg)
-
 '''
 tree = parser('1+2*3')
 print(repr(tree))
 tree = parser('1@2*3')
 print(repr(tree))
 '''
-
-
 class Expr(object):
-    @classmethod  # クラスのメソッド
+    @classmethod
     def new(cls, v):
         if isinstance(v, Expr):
             return v
         return Val(v)
-
 class Val(Expr):
     __slots__ = ['value']
     def __init__(self, value):
         self.value = value
     def __repr__(self):
         return f'Val({self.value})'
-    def eval(self, env: dict):    #引数に変数の集合とそれに対応する値の集合(=環境)をとる。　環境envは変数が値をローカルに、可変量として保持している状態の辞書である
+    def eval(self, env: dict):
         return self.value
-
-#e = Val(0)
-#assert e.eval({}) == 0
-
+e = Val(0)
+assert e.eval({}) == 0
 class Binary(Expr):
     __slots__ = ['left', 'right']
     def __init__(self, left, right):
@@ -40,7 +32,6 @@ class Binary(Expr):
     def __repr__(self):
         classname = self.__class__.__name__
         return f'{classname}({self.left},{self.right})'
-
 class Add(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
@@ -57,12 +48,10 @@ class Div(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) // self.right.eval(env)
-
 class Mod(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) % self.right.eval(env)
-
 class Eq(Binary): # left == right
     __slots__ = ['left', 'right']
     def eval(self, env: dict):   # cond ? x : y
@@ -87,29 +76,24 @@ class Gte(Binary): # left != right
     __slots__ = ['left', 'right']
     def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) >= self.right.eval(env) else 0
-
-class Var(Expr):  #変数を環境を用いて保持するクラス
-    __slots__ = ['name']  #slotsは複数形です。
-    def __init__(self, name: str):
+class Var(Expr):
+    __slots__ = ['name']
+    def __init__(self, name):
         self.name = name
     def __repr__(self):
         return self.name
     def eval(self, env: dict):
         if self.name in env:
             return env[self.name]
-        # return 0 #キーが辞書になかったら初期値0を返すようにする
-        else:
-            raise NameError(self.name) #エラー発見をしやすくするためにはエラー報告をさせるほうが望ましい
-
-class Assign(Expr): #変数への値の代入を行うクラス
+        raise NameError(self.name)
+class Assign(Expr):
     __slots__ = ['name', 'e']
-    def __init__(self, name: str, e):
+    def __init__(self, name, e):
         self.name = name
-        self.e = Expr.new(e) # classmethodを使用　Expr型でない場合はExpr型に変換
+        self.e = Expr.new(e)
     def eval(self, env):
-        env[self.name] = self.e.eval(env) #ここ循環定義にならないのなぜだろう?
+        env[self.name] = self.e.eval(env)
         return env[self.name]
-
 class Block(Expr):
     __slots__ = ['exprs']
     def __init__(self, *exprs): # 可変長個の引数
@@ -137,25 +121,6 @@ class If(Expr):
             return self.then.eval(env)
         else:
             return self.else_.eval(env)
-    
-'''
-# Varクラスのテスト
-try:
-    e = Var('x')
-    print(e.eval({'x': 123})) #ここで辞書を作っている
-    print(e.eval({})) #辞書が定義されていないので(エラー対策をしていないと)キーエラーになる
-except NameError:
-    print("未定義の変数です")
-
-# Assignクラスのテスト
-env = {}
-e = Assign('x', Val(1)) # x = 1
-print(e.eval(env)) # 1
-e = Assign('x', Add(Var('x'), Val(2))) # x = x + 2
-print(e.eval(env)) # 3
-'''
-
-# lambda式
 class Lambda(Expr):
     __slots__ = ['name', 'body']
     def __init__(self, name, body):
@@ -165,41 +130,31 @@ class Lambda(Expr):
         return f'λ{self.name} . {str(self.body)}'
     def eval(self, env):
         return self
-
-def copy(env): #環境をコピーする関数
+def copy(env): #環境をコピーすることでローカルスコープを作る
     newenv = {}
     for x in env.keys():
         newenv[x] = env[x]
     return newenv
-
-
-# 確認
-f = Lambda('x', Add(Var('x'), 1)) # λx.x+1
-print(repr(f))
-
 class FuncApp(Expr):
     __slots__ = ['func', 'param']
     def __init__(self, func: Lambda, param):
         self.func = func
         self.param = Expr.new(param)
     def __repr__(self):
-        return f'({repr(self.func)}) ({repr(self.param)})' # ここ循環定義にならないのか?
-
-    def eval(self, env): #環境を書き換えて評価する
+        return f'({repr(self.func)}) ({repr(self.param)})'
+    def eval(self, env):
         f = self.func.eval(env)
-        v = self.param.eval(env) # パラメータを先に評価する
-        name = f.name # Lambda classの変数名をもらう
-        env = copy(env) # 環境をコピーすることでローカルスコープを作る
-        env[name] = v # コピーして作られたローカルな環境において、変数名にパラメータの値を代入する
-        return f.body.eval(env) # パラメータの値を式に代入して値を返す
-
-
+        v = self.param.eval(env)  # パラメータを先に評価する
+        name = f.name # Lambda の変数名をとる
+        env = copy(env)  # 環境をコピーすることでローカルスコープを作る
+        env[name] = v   # 環境から引数を渡す
+        return f.body.eval(env)
 def conv(tree):
     if tree == 'Block':
         return conv(tree[0])
-    if tree == 'FuncDecl': # Lambda式の時に追加
+    if tree == 'FuncDecl':   # この２行を追加します
         return Assign(str(tree[0]), Lambda(str(tree[1]), conv(tree[2])))
-    if tree == 'FuncApp':
+    if tree == 'FuncApp':   # この２行を追加します
         return FuncApp(conv(tree[0]), conv(tree[1]))
     if tree == 'If':
         return If(conv(tree[0]), conv(tree[1]), conv(tree[2]))
@@ -210,7 +165,7 @@ def conv(tree):
     if tree == 'Add':
         return Add(conv(tree[0]), conv(tree[1]))
     if tree == 'Sub':
-        return Sub(conv(tree[0]), conv(tree[1]))
+        return Sub(conv(tree[0]), conv(tree[1]))    
     if tree == 'Mul':
         return Mul(conv(tree[0]), conv(tree[1]))
     if tree == 'Div':
@@ -232,21 +187,17 @@ def conv(tree):
     if tree == 'Var':
         return Var(str(tree))
     if tree == 'LetDecl':
-        return Assign(str(tree[0]), conv(tree[1])) # 変数への代入を行う場合
-
+        return Assign(str(tree[0]), conv(tree[1]))
     print('@TODO', tree.tag, repr(tree))
     return Val(str(tree))
-
-
-def run(src: str, env: dict): #構文木からVar, Assign式に変換できるようにする
+def run(src: str, env: dict):
     tree = parser(src)
     if tree.isError():
         print(repr(tree))
     else:
         e = conv(tree)
-        print('env', env)
+        #print('env', env)
         print(e.eval(env))
-
 def main():
     try:
         env = {}
@@ -257,15 +208,22 @@ def main():
             run(s, env)
     except EOFError:
         return
-
 if __name__ == '__main__':
     main()
 
+
 # Block
-env = {}
 e = Block(
     Assign('x', Val(1)),
     Assign('x', Add(Var('x'), Val(1))),
-    Var('x')
+    #Var('x')
 )
-print(e.eval(env))
+assert(e.eval({})) == 2
+
+# If
+e = Block(
+    Assign('x', 2),
+    Assign('y', 1),
+    If(Gt(Var('x'), Var('y')), Var('x'), Var('y'))
+)
+assert(e.eval({})) == 2
