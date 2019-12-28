@@ -14,7 +14,8 @@ class Var(Expr):
     __slots__ = ['name']
     def __init__(self, s: str):
         self.name = s
-
+    def __repr__(self):
+        return self.name
     def eval(self, env: dict):
         if self.name in env:
             return env[self.name]
@@ -155,6 +156,16 @@ class Gte(Binary):
     def eval(self, env: dict):
         return 1 if self.left.eval(env) >= self.right.eval(env) else 0
 
+class Block(Expr):
+    __slots__ = ['exprs']
+    def __init__ (self, *exprs):
+        self.exprs = exprs
+
+    def eval(self, env):
+        for e in self.exprs:  # 逐次処理の本質的な部分はここ
+            e.eval(env)
+
+
 
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
@@ -233,3 +244,12 @@ assert e.eval({'x':1}) == 1
 env = {}
 e = Assign('x', Val(1))
 assert e.eval(env) == 1
+
+# Block
+env = {}
+e = Block(
+    Assign('x', Val(1)),
+    Assign('x', Add(Var('x'), Val(1))),
+    Var('x')
+)
+print(e.eval(env))
