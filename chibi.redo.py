@@ -12,8 +12,8 @@ class Expr(object): # 上位クラス
 
 class Val(Expr): #Exprから継承されたクラス
     __slots__ = ['value']
-    def __init__(self, v):
-        self.value = v
+    def __init__(self, value):
+        self.value = value
 
     def __repr__(self):
         return f'Val({self.value})'
@@ -27,7 +27,7 @@ class Binary(Expr):
         self.left = Expr.new(left)
         self.right = Expr.new(right) #ここで式として渡しておく
     
-    def eval(self): pass # 定義の内容は下位クラスごとに違うのでここでは定義しない
+   # def eval(self): pass # 定義の内容は下位クラスごとに違うのでここでは定義しない
 
     def __repr__(self):
         classname = self.__class__.__name__
@@ -38,7 +38,7 @@ class Add(Binary):# repr, initは上位クラスBinaryで定義済
     def eval(self, env: dict):
         return self.left.eval(env) + self.right.eval(env) # 元々式の値として渡し、ここで評価するようにする
 class Sub(Binary):
-    __slots__ = ['left', 'right'] 
+    __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) - self.right.eval(env)
 class Mul(Binary):
@@ -46,7 +46,7 @@ class Mul(Binary):
     def eval(self, env: dict):
         return self.left.eval(env) * self.right.eval(env)
 class Div(Binary):
-    __slots__ = ['left', 'right']    
+    __slots__ = ['left', 'right'] 
     def eval(self, env: dict):
         return self.left.eval(env) / self.right.eval(env)
 class Mod(Binary):
@@ -80,8 +80,8 @@ class Gte(Binary):
 
 class Var(Expr):
     __slots__ = ['name']
-    def __init__(self, s):
-        self.name = s
+    def __init__(self, name):
+        self.name = name
     def __repr__(self):
         return self.name
     def eval(self, env: dict):
@@ -90,18 +90,18 @@ class Var(Expr):
         raise NameError(self.name)
 
 class Assign(Expr):
-    __slots__ = ['name', 'expr']
-    def __init__(self, s, ex):
-        self.name = s
-        self.expr = Expr.new(ex)
+    __slots__ = ['name', 'e']
+    def __init__(self, name, e):
+        self.name = name
+        self.e = Expr.new(e)
 
     def eval(self, env: dict):
-        env[self.name] = self.expr.eval(env)
+        env[self.name] = self.e.eval(env)
         return env[self.name]
 
 class Block(Expr):
     __slots__ = ['exprs']
-    def __init__ (self, *exprs):
+    def __init__(self, *exprs):
         self.exprs = exprs
 
     def eval(self, env):
@@ -109,27 +109,28 @@ class Block(Expr):
             e.eval(env)
 
 class While(Expr):
-    __slots__ = ['cond', 'body_']
-    def __init__ (self, cond, body_):
+    __slots__ = ['cond', 'body']
+    def __init__ (self, cond, body):
         self.cond = cond
-        self.body_ = body_
+        self.body = body
 
     def eval(self, env):
         while self.cond.eval(env) != 0:
             try:
-                self.body_.eval(env)
+                self.body.eval(env)
             except ValueError:
                 break
 
 class If(Expr):
     __slots__ = ['cond', 'then', 'else_']
-    def __init__ (self, cond, then, else_):
+    def __init__(self, cond, then, else_):
         self.cond = cond
         self.then = then
         self.else_ = else_
     
     def eval(self, env):
-        if self.cond.eval(env) != 0:
+        yesorno = self.cond.eval(env)
+        if yesorno == 1:
             return self.then.eval(env)
         else:
             return self.else_.eval(env)
@@ -161,12 +162,12 @@ class FuncApp(Expr):
         self.param = Expr.new(param)
     def __repr__(self):
         return f'({repr(self.func)}) ({repr(self.param)})'
-    def eval (self, env):
+    def eval(self, env):
         f = self.func.eval(env)
-        p = self.param.eval(env)
+        v = self.param.eval(env)
         name = f.name
         env = copy(env)
-        env[name] = p # 正格評価
+        env[name] = v # 正格評価
         return f.body.eval(env)
 
 def conv(tree):
@@ -209,12 +210,13 @@ def conv(tree):
         return Var(str(tree))
     if tree == 'LetDecl':
         return Assign(str(tree[0]), conv(tree[1]))
+    print('@TODO', tree.tag, repr(tree))
     return Val(str(tree))
 
-def run(s: str, env: dict):
-    tree = parser(s)
+def run(src: str, env: dict):
+    tree = parser(src)
     if tree.isError():
-        print('Error')
+        print(repr(tree))
     else:  # 解析が可能な場合
         e = conv(tree)
         print(repr(e))
