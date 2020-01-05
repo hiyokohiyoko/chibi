@@ -216,6 +216,12 @@ class FunkApp(Expr):
         env[self.name] = p # 正格評価
         return f.body.eval(env)
 
+def copy(env):
+    localenv = {}
+    for x in env.keys():
+        localenv[x] = env[x]
+    return localenv
+
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
     if t.tag == 'Block':
