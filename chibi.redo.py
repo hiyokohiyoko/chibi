@@ -205,17 +205,19 @@ class Lambda(Expr):
     def eval(self, env):
         return self.body
 
-class FunkApp(Expr):
+class FuncApp(Expr):
     __slots__ = ['func', 'param'] # funcはλ式
-    def __init__ (self, func: Expr, param: Expr):
+    def __init__ (self, func: Lambda, param: Expr):
         self.func = func
-        self.param = param
+        self.param = expr(param)
+    def __repr__ (self):
+        return f'({repr(self.func)}) ({repr(self.param)})'
     def eval (self, env):
         f = self.func.eval(env)
         p = self.param.eval(env)
         env = copy(env)
-        env[f.name] = p # 正格評価
-        return f.body.eval(env)
+        env[self.func.name] = p # 正格評価
+        return self.func.body.eval(env)
 
 def copy(env):
     localenv = {}
@@ -343,3 +345,9 @@ e = Block(
 )
 # assert e.eval({}) == 5
 print(e.eval({}))
+
+# Currying
+env = {}
+f = Lambda('x', Lambda('y', Add(Var('x'), Var('y'))))
+e = FuncApp(FuncApp(f, Val(1)), Val(2))
+assert e.eval(env) == 3
