@@ -195,6 +195,27 @@ class Break(Expr):
     def eval(self, env):
         raise ValueError
 
+class Lambda(Expr):
+    __slots__ = ['name', 'body']
+    def __init__ (self, name: str, body: Expr):
+        self.name = name
+        self.body = body
+    def __repr__ (self):
+        return f'λ{self.name} . {str(self.body)}'
+    def eval(self, env):
+        return self.body
+
+class FunkApp(Expr):
+    __slots__ = ['func', 'param'] # funcはλ式
+    def __init__ (self, func: Expr, param: Expr):
+        self.func = func
+        self.param = param
+    def eval (self, env):
+        f = self.func.eval(env)
+        p = self.param.eval(env)
+        env[self.name] = p # 正格評価
+        return f.body.eval(env)
+
 def conv(t):
     #print(repr(t)) # 評価される前の構造木を表示
     if t.tag == 'Block':
