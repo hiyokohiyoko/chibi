@@ -1,13 +1,7 @@
 import pegpy
-#from pegpy.tpeg import ParseTree
 peg = pegpy.grammar('chibi.tpeg')
 parser = pegpy.generate(peg)
-'''
-tree = parser('1+2*3')
-print(repr(tree))
-tree = parser('1@2*3')
-print(repr(tree))
-'''
+
 class Expr(object):
     @classmethod
     def new(cls, v):
@@ -33,7 +27,7 @@ class Binary(Expr):
         self.right = Expr.new(right)
     def __repr__(self):
         classname = self.__class__.__name__
-        return f'{classname}({self.left},{self.right})'
+        return f'{classname}({self.left}, {self.right})'
 
 class Add(Binary):
     __slots__ = ['left', 'right']
@@ -180,7 +174,7 @@ def conv(tree):
     if tree == 'Add':
         return Add(conv(tree[0]), conv(tree[1]))
     if tree == 'Sub':
-        return Sub(conv(tree[0]), conv(tree[1]))    
+        return Sub(conv(tree[0]), conv(tree[1]))
     if tree == 'Mul':
         return Mul(conv(tree[0]), conv(tree[1]))
     if tree == 'Div':
