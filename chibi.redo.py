@@ -216,8 +216,8 @@ class FuncApp(Expr):
         f = self.func.eval(env)
         p = self.param.eval(env)
         env = copy(env)
-        env[self.func.name] = p # 正格評価
-        return self.func.body.eval(env)
+        env[f.name] = p # 正格評価
+        return f.body.eval(env)
 
 def copy(env):
     localenv = {}
