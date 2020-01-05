@@ -1,14 +1,72 @@
 # 有理数としての演算を可能にする
 
-class Expr(object): # 上位クラス
-    def eval(self): pass # 下位クラスに共通のメソッド　定義の内容は下位クラスごとに違うのでここでは定義しない
+import math
 
-def expr(e): #Expr(式)クラスであるかどうか判定する関数
-    if not isinstance(e, Expr):
-        e = Val(e)
-    return e
+class Expr(object):
+    pass
 
-class Binary(Expr):
+class Q(Expr):
+    def  __init__(self, a, b = 1): #引数を渡す インスタンス化の時に呼ばれる bの初期値を書いておくと省略可能
+        gcd = math.gcd(a, b)
+        self.a = a//gcd  #引数は必ずself (Java, C等はthisを使う)
+        self.b = b//gcd
+
+    def __repr__(self): #__(  )__ で表記されるメソッドは元々意味が決まっている　reprはそのオブジェクトの中身を文字列として表示する print(object)で呼び出せる
+        if self.b == 1:
+            return str(self.a)
+        else:
+            return f"{self.a}/{self.b}" #要復習!
+    
+    def __add__(self, q): # __add__で「＋」を用いた糖衣記法に対応可能
+        if isinstance(q, Q):
+            a = self.a * q.b + self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a + self.b * q
+            b = self.b
+            return Q(a, b)
+
+    def __sub__(self, q):
+        if isinstance(q, Q):
+            a = self.a * q.b - self.b * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a - self.b * q
+            b = self.b
+            return Q(a, b)
+
+    def __mul__(self, q):
+        if isinstance(q, Q):
+            a = self.a * q.a
+            b = self.b * q.b
+            return Q(a, b)
+        else:
+            a = self.a * q
+            b = self.b
+            return Q(a, b)
+
+    def __truediv__(self, q):
+        if isinstance(q, Q):
+            a = self.a * q.b
+            b = self.b * q.a
+            return Q(a, b)
+        else:
+            a = self.a
+            b = self.b * q
+            return Q(a, b)
+
+    def __eq__(self, q):
+        if self.a == q.a and self.b == q.b:
+            return True
+        else:
+            return False
+
+    def eval(self):
+        return self
+
+class Binary(Q):
     __slots__ = ['a', 'b']
     def __init__(self, a, b):
         self.a = a
@@ -20,93 +78,27 @@ class Binary(Expr):
         #classname = self.__class__.__name__
         #return f'{classname}({self.a}, {self.b})'
 
-class Val(Expr): #Exprから継承されたクラス
-    __slots__ = ['value']
-    def __init__(self, v = 0):
-        self.value = v
-
-    def eval(self):
-        return self.value
-
-    def __repr__(self):
-        return self.value
-
 class Add(Binary):
     __slots__ = ['a', 'b']
-    def __init__(self, a, b):
-        self.a = expr(a)
-        self.b = expr(b) #この2つは式として渡される
-
-    def __repr__(self):
-        aa = self.a.eval().a.eval() * self.b.eval().b.eval() + self.a.eval().b.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb)
-    
     def eval(self):
-        aa = self.a.eval().a.eval() * self.b.eval().b.eval() + self.a.eval().b.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb) # 元々式の値として渡し、ここで評価するようにする
-
+        return self.a.eval() + self.b.eval()
     # reprは上位クラスBinaryで定義済
-
 class Mul(Binary):
     __slots__ = ['a', 'b']
-    def __init__(self, a, b):
-        self.a = expr(a)
-        self.b = expr(b)
-
-    def __repr__(self):
-        aa = self.a.eval().a.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb)
-    
     def eval(self):
-        aa = self.a.eval().a.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb)
-
+        return self.a.eval() * self.b.eval()
 class Sub(Binary):
     __slots__ = ['a', 'b']
-    def __init__(self, a, b):
-        self.a = expr(a)
-        self.b = expr(b)
-
-    def __repr__(self):
-        aa = self.a.eval().a.eval() * self.b.eval().b.eval() - self.a.eval().b.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb)
-        
     def eval(self):
-        aa = self.a.eval().a.eval() * self.b.eval().b.eval() - self.a.eval().b.eval() * self.b.eval().a.eval()
-        bb = self.a.eval().b.eval() * self.b.eval().b.eval()
-        return Div(aa, bb)
-
+        return self.a.eval() - self.b.eval()
 class Div(Binary):
     __slots__ = ['a', 'b']
-    def __init__(self, a, b = 1):
-        self.a = expr(a)
-        self.b = expr(b)
-
-    def __repr__(self):
-        if self.a.eval().b.eval() == 1 and self.b.eval().b.eval() == 1:
-           return Div(self.a.eval().a.eval(), self.b.eval().a.eval())
-        else:
-            aa = self.a.eval().a.eval() * self.b.eval().b.eval()
-            bb = self.a.eval().b.eval() * self.b.eval().a.eval()
-            return Div(aa, bb)
-            
     def eval(self):
-        if self.a.eval().b.eval() == 1 and self.b.eval().b.eval() == 1:
-           return Div(self.a.eval().a.eval(), self.b.eval().a.eval())
-        else:
-            aa = self.a.eval().a.eval() * self.b.eval().b.eval()
-            bb = self.a.eval().b.eval() * self.b.eval().a.eval()
-            return Div(aa, bb)
-
+        return self.a.eval() / self.b.eval()
 
 #有理数表示 1/2 + 2/3
-e = Add(Div(1, 2), Div(2, 3))
-#assert e == Div(6, 7)
-print(e)
+e = Add(Q(1, 2), Q(2, 3))
+assert e == Q(7, 6)
+#print(repr(e))
 
 
