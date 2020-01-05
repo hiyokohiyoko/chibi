@@ -261,6 +261,10 @@ def conv(t):
         return If(conv(t[0]), conv(t[1]), conv(t[2]))
     if t.tag == 'While':
         return While(conv(t[0]), conv(t[1]))
+    if t.tag == 'Funcdecl':
+        return Assign(str(t[0]), Lambda(str(t[1]), conv(t[2])))
+    if t.tag == 'FuncApp':
+        return FuncApp(conv(t[0]), conv(t[1]))
     return Val(str(t))
 
 
