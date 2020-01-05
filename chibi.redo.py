@@ -213,7 +213,8 @@ class FunkApp(Expr):
     def eval (self, env):
         f = self.func.eval(env)
         p = self.param.eval(env)
-        env[self.name] = p # 正格評価
+        env = copy(env)
+        env[f.name] = p # 正格評価
         return f.body.eval(env)
 
 def copy(env):
